@@ -1,0 +1,29 @@
+# https://editorconfig.org/
+# https://editorconfig-specification.readthedocs.io/en/latest/#id7
+# https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties
+# https://github.com/editorconfig/editorconfig/wiki/Projects-Using-EditorConfig
+
+root = true
+
+[*]
+charset = utf-8
+# 换行符 : lf (Unix), crlf (DOS), cr (Mac)
+# 在 Windows 环境下使用 LF 建议修改 Git 配置：
+# $git config core.autocrlf input - 提交时转为 LF ，检出时不转换
+# $git config core.safecrlf true - 拒绝提交包含混合换行符的文件
+end_of_line = lf
+# 行尾空格自动删除
+trim_trailing_whitespace = true
+# 文件以一个空白行结束
+insert_final_newline = true
+# 缩进使用 tab 或者 space
+indent_style = space
+# 每个 space 缩进的字符数
+indent_size = 2
+
+[*.{js,jsx,ts,tsx,json,css}]
+indent_style = space
+indent_size = 2
+
+[*.{md,markdown}]
+trim_trailing_whitespace = false
