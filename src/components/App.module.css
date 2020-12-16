@@ -1,0 +1,15 @@
+.header {
+  box-sizing: border-box;
+  padding: 6px 20px;
+  height: 50px;
+  line-height: 38px;
+  font-size: 16px;
+  background-color: #369;
+  color: beige;
+}
+
+.header img {
+  height: 100%;
+  margin-right: 10px;
+  vertical-align: middle;
+}
