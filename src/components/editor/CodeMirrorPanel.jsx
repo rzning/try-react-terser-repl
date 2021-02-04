@@ -13,6 +13,9 @@ export default function CodeMirrorPanel(props) {
 
   return (
     <div className={cx(styles.container, props.className)}>
+      <div className={styles.header}>
+        <div className={styles.title}>{props.title}</div>
+      </div>
       <div className={styles.codeMirror}>
         <CodeMirror
           theme={props.theme}

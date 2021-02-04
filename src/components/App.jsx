@@ -1,11 +1,8 @@
-import { useState } from 'react'
-import CodeEditor from './editor/CodeMirrorPanel'
 import logo from '../assets/terser-logo.png'
 import styles from './App.module.css'
+import Repl from './Repl'
 
 export default function App() {
-  const [code, setCode] = useState('// 编写或粘贴代码到此处')
-
   return (
     <div className={styles.app}>
       <header className={styles.header}>
@@ -13,7 +10,7 @@ export default function App() {
         <span>Terser REPL Demo</span>
       </header>
       <main className={styles.content}>
-        <CodeEditor code={code} onChange={setCode} />
+        <Repl />
       </main>
     </div>
   )

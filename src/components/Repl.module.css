@@ -1,0 +1,29 @@
+.container {
+  width: 100%;
+  height: 100%;
+}
+
+.horizontalLayout {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.verticalLayout {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.card {
+  flex: 1;
+}
+.card2 {
+  flex: 2;
+}
+.card3 {
+  flex: 3;
+}
