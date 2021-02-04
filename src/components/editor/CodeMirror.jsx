@@ -47,7 +47,8 @@ export default forwardRef(function ReactCodeMirror(props, ref) {
     value = '',
     width = '100%',
     height = '100%',
-    theme = 'default'
+    theme = 'default',
+    onChange
   } = props || {}
 
   const effectiveOptions = useMemo(() => {
@@ -122,6 +123,26 @@ export default forwardRef(function ReactCodeMirror(props, ref) {
       editor.setOption('theme', theme)
     }
   }, [editor, theme])
+
+  // 监听修改事件 change
+  useEffect(() => {
+    if (editor && typeof onChange === 'function') {
+      /**
+       * @param {Editor} cm
+       * @param {import('codemirror').EditorChangeLinkedList} event
+       * @see https://codemirror.net/doc/manual.html#event_change
+       */
+      function onValueChange(cm, event) {
+        if (event.origin !== 'setValue') {
+          onChange(cm.getValue(), event)
+        }
+      }
+      editor.on('change', onValueChange)
+      return () => {
+        editor.off('change', onValueChange)
+      }
+    }
+  }, [editor, onChange])
 
   return <textarea name={props.name} ref={innerRef}></textarea>
 })
