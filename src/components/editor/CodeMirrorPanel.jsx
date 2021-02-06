@@ -1,9 +1,13 @@
 import cx from 'classnames'
-import { useMemo } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
+import { getCodeSizeInBytes } from '../../utils/helpers'
 import CodeMirror from './CodeMirror'
 import styles from './CodeMirrorPanel.module.css'
 
-export default function CodeMirrorPanel(props) {
+export default memo(function CodeMirrorPanel(props) {
+  /**
+   * 选项
+   */
   const options = useMemo(() => {
     return {
       ...props.options,
@@ -11,10 +15,36 @@ export default function CodeMirrorPanel(props) {
     }
   }, [props.onChange, props.options])
 
+  /**
+   * 代码字节数
+   */
+  const fileSize = useMemo(() => {
+    if (props.showFileSize) {
+      return getCodeSizeInBytes(props.code)
+    }
+    return 0
+  }, [props.showFileSize, props.code])
+
+  const [modeName, setModeName] = useState(null)
+
+  const onEditorMounted = useCallback(
+    /**
+     * @param {import('codemirror').Editor} editor
+     */
+    (editor) => {
+      setModeName(editor.getOption('mode'))
+    },
+    []
+  )
+
   return (
     <div className={cx(styles.container, props.className)}>
       <div className={styles.header}>
         <div className={styles.title}>{props.title}</div>
+        {props.showFileSize && (
+          <div className={styles.widget}>{fileSize} bytes</div>
+        )}
+        <div className={styles.widget}>{modeName}</div>
       </div>
       <div className={styles.codeMirror}>
         <CodeMirror
@@ -22,8 +52,9 @@ export default function CodeMirrorPanel(props) {
           options={options}
           value={props.code}
           onChange={props.onChange}
+          onEditorMounted={onEditorMounted}
         />
       </div>
     </div>
   )
-}
+})
