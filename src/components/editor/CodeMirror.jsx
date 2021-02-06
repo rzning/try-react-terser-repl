@@ -7,7 +7,6 @@ import {
   forwardRef,
   useEffect,
   useImperativeHandle,
-  useMemo,
   useRef,
   useState
 } from 'react'
@@ -48,15 +47,9 @@ export default forwardRef(function ReactCodeMirror(props, ref) {
     width = '100%',
     height = '100%',
     theme = 'default',
-    onChange
+    onChange,
+    onEditorMounted
   } = props || {}
-
-  const effectiveOptions = useMemo(() => {
-    if (options && typeof options === 'object') {
-      return { ...defaultOptions, ...options }
-    }
-    return defaultOptions
-  }, [options])
 
   /**
    * @type {UseState<Editor>}
@@ -67,13 +60,17 @@ export default forwardRef(function ReactCodeMirror(props, ref) {
 
   const innerRef = useRef()
 
-  // 初始化编辑器
+  const [initialOptions] = useState(() => {
+    if (options && typeof options === 'object') {
+      return { ...defaultOptions, ...options }
+    }
+    return defaultOptions
+  })
+
+  // 初始化编辑器 editor
   useEffect(() => {
     if (!editor) {
-      const instance = CodeMirror.fromTextArea(
-        innerRef.current,
-        effectiveOptions
-      )
+      const instance = CodeMirror.fromTextArea(innerRef.current, initialOptions)
       setEditor(instance)
     }
     return () => {
@@ -86,7 +83,26 @@ export default forwardRef(function ReactCodeMirror(props, ref) {
         setEditor(void 0)
       }
     }
-  }, [editor, effectiveOptions])
+  }, [editor, initialOptions])
+
+  // 执行编辑器挂载回调 onEditorMounted
+  useEffect(() => {
+    if (editor && typeof onEditorMounted === 'function') {
+      onEditorMounted(editor)
+    }
+  }, [editor, onEditorMounted])
+
+  // 更新选项 updateOptions
+  useEffect(() => {
+    if (editor) {
+      Reflect.ownKeys(options).forEach((optionName) => {
+        const newValue = Reflect.get(options, optionName)
+        if (newValue !== editor.getOption(optionName)) {
+          editor.setOption(optionName, newValue)
+        }
+      })
+    }
+  }, [editor, options])
 
   // 更新值 value
   useEffect(() => {
@@ -104,18 +120,6 @@ export default forwardRef(function ReactCodeMirror(props, ref) {
       editor.setSize(width, height)
     }
   }, [editor, height, width])
-
-  // 更新选项 updateOptions
-  useEffect(() => {
-    if (editor) {
-      Reflect.ownKeys(effectiveOptions).forEach((optionName) => {
-        const newValue = Reflect.get(effectiveOptions, optionName)
-        if (newValue !== editor.getOption(optionName)) {
-          editor.setOption(optionName, newValue)
-        }
-      })
-    }
-  }, [editor, effectiveOptions])
 
   // 更新主题 theme
   useEffect(() => {
