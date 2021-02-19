@@ -1,10 +1,8 @@
-// @flow
-import * as React from 'react'
 import logo from '../assets/terser-logo.png'
 import styles from './App.module.css'
 import Repl from './Repl'
 
-export default function App(): React.Node {
+export default function App() {
   return (
     <div className={styles.app}>
       <header className={styles.header}>

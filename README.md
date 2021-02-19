@@ -19,7 +19,6 @@ Terser REPL Demo
 - 使用 [Prettier] 格式化代码。
 - 使用 [Classnames] 组织样式类名。
 - 使用 [CodeMirror] 代码编辑器。
-- 使用 [Flow] 进行静态类型检查。
 
 [terser]: https://github.com/terser/terser
 [repl]: https://github.com/terser/repl
@@ -28,4 +27,3 @@ Terser REPL Demo
 [prettier]: https://github.com/prettier/prettier
 [classnames]: https://github.com/JedWatson/classnames
 [codemirror]: https://github.com/codemirror/CodeMirror
-[flow]: https://github.com/facebook/flow

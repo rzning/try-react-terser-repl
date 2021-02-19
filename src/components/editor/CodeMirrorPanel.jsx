@@ -1,10 +1,11 @@
 import cx from 'classnames'
 import { memo, useCallback, useMemo, useState } from 'react'
+import PropsTypes from 'prop-types'
 import { getCodeSizeInBytes } from '../../utils/helpers'
 import CodeMirror from './CodeMirror'
 import styles from './CodeMirrorPanel.module.css'
 
-export default memo(function CodeMirrorPanel(props) {
+function CodeMirrorPanel(props) {
   /**
    * 选项
    */
@@ -57,4 +58,16 @@ export default memo(function CodeMirrorPanel(props) {
       </div>
     </div>
   )
-})
+}
+
+CodeMirrorPanel.propTypes = {
+  className: PropsTypes.string,
+  title: PropsTypes.string,
+  options: PropsTypes.object,
+  theme: PropsTypes.string,
+  showFileSize: PropsTypes.bool,
+  code: PropsTypes.string.isRequired,
+  onChange: PropsTypes.func
+}
+
+export default memo(CodeMirrorPanel)
