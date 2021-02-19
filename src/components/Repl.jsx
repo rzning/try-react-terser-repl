@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { minify } from 'terser'
 import EditorPanel from './editor/CodeMirrorPanel'
 import styles from './Repl.module.css'
 
@@ -8,17 +9,38 @@ export default function Repl() {
   const [options, setOptions] = useState('{}')
   const [code, setCode] = useState('// 编写或粘贴代码到此处')
   const [minifiedCode, setMinifiedCode] = useState('// Terser output')
+  const [errorInfo, setErrorInfo] = useState()
 
-  function doMinify(value) {
-    // todo...
-    return value
+  async function doMinify(value) {
+    try {
+      const result = await minify(value)
+      return {
+        code: (result && result.code) || ''
+      }
+    } catch (exception) {
+      return {
+        error: {
+          line: exception.line,
+          col: exception.col,
+          pos: exception.pos,
+          name: exception.name,
+          message: exception.message
+        }
+      }
+    }
   }
 
-  const updateCode = useCallback((value) => {
+  const updateCode = useCallback(async (value) => {
     setCode(value)
-    const output = doMinify(value)
+    const output = await doMinify(value)
     if (output) {
-      setMinifiedCode(output)
+      if (output.error) {
+        setErrorInfo(output.error)
+        setMinifiedCode('')
+      } else {
+        setErrorInfo(null)
+        setMinifiedCode(output.code)
+      }
     }
   }, [])
 
@@ -31,6 +53,7 @@ export default function Repl() {
             showFileSize
             code={code}
             onChange={updateCode}
+            errorInfo={errorInfo}
           />
         </div>
         <div className={styles.card}>
