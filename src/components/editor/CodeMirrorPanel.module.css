@@ -43,10 +43,29 @@
   overflow: auto;
 }
 
-.info {
-  order: 1;
+.errorLine {
+  margin-top: 3px;
+  background-color: lightgoldenrodyellow;
+  color: red;
 }
 
-.error {
-  order: 2;
+.errorLineLabel {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 2px 6px;
+  background-color: salmon;
+  color: white;
+}
+
+.errorMarker {
+  position: relative;
+}
+.errorMarker::after {
+  content: '';
+  background-color: red;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 3px;
 }
