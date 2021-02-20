@@ -1,49 +1,46 @@
 import cx from 'classnames'
 import { useCallback, useState } from 'react'
-import { minify } from 'terser'
+import defaultTerserOptions from '../configs/defaultTerserOptions.json'
+import { doMinify } from '../utils/minify'
 import EditorPanel from './editor/CodeMirrorPanel'
 import styles from './Repl.module.css'
 
 export default function Repl() {
-  const [optionsEditorOptions] = useState({ mode: 'json' })
-
-  const [options, setOptions] = useState('{}')
+  const [optionsCodeEditorOptions] = useState({ mode: 'json' })
+  const [terserOptionsCode, setTerserOptionsCode] = useState(() =>
+    JSON.stringify(defaultTerserOptions)
+  )
+  const [terserOptions, setTerserOptions] = useState(() => defaultTerserOptions)
   const [code, setCode] = useState('// 编写或粘贴代码到此处')
   const [minifiedCode, setMinifiedCode] = useState('// Terser output')
   const [errorInfo, setErrorInfo] = useState()
 
-  async function doMinify(value) {
+  const updateOptionsCode = useCallback((value) => {
+    setTerserOptionsCode(value)
     try {
-      const result = await minify(value)
-      return {
-        code: (result && result.code) || ''
-      }
+      const options = JSON.parse(value)
+      setTerserOptions(options)
     } catch (exception) {
-      return {
-        error: {
-          line: exception.line,
-          col: exception.col,
-          pos: exception.pos,
-          name: exception.name,
-          message: exception.message
-        }
-      }
-    }
-  }
-
-  const updateCode = useCallback(async (value) => {
-    setCode(value)
-    const output = await doMinify(value)
-    if (output) {
-      if (output.error) {
-        setErrorInfo(output.error)
-        setMinifiedCode('')
-      } else {
-        setErrorInfo(null)
-        setMinifiedCode(output.code)
-      }
+      console.dir(exception)
     }
   }, [])
+
+  const updateCode = useCallback(
+    async (value) => {
+      setCode(value)
+      const output = await doMinify(value, terserOptions)
+      if (output) {
+        if (output.error) {
+          setErrorInfo(output.error)
+          setMinifiedCode('')
+        } else {
+          setErrorInfo(null)
+          setMinifiedCode(output.code)
+        }
+      }
+    },
+    [terserOptions]
+  )
 
   return (
     <div className={styles.container}>
@@ -62,9 +59,9 @@ export default function Repl() {
             <div className={styles.card}>
               <EditorPanel
                 title="Terser Options"
-                code={options}
-                options={optionsEditorOptions}
-                onChange={setOptions}
+                code={terserOptionsCode}
+                options={optionsCodeEditorOptions}
+                onChange={updateOptionsCode}
               />
             </div>
             <div className={styles.card2}>
