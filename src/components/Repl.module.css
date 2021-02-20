@@ -18,12 +18,16 @@
   overflow: auto;
 }
 
+.w50 {
+  width: 50%;
+}
+
 .card {
-  flex: 1;
+  flex: 1 1 auto;
 }
 .card2 {
-  flex: 2;
+  flex: 2 2 auto;
 }
 .card3 {
-  flex: 3;
+  flex: 3 3 auto;
 }

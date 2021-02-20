@@ -1,3 +1,4 @@
+import cx from 'classnames'
 import { useCallback, useState } from 'react'
 import { minify } from 'terser'
 import EditorPanel from './editor/CodeMirrorPanel'
@@ -47,7 +48,7 @@ export default function Repl() {
   return (
     <div className={styles.container}>
       <div className={styles.horizontalLayout}>
-        <div className={styles.card}>
+        <div className={cx(styles.card, styles.w50)}>
           <EditorPanel
             title="Input"
             showFileSize
@@ -56,7 +57,7 @@ export default function Repl() {
             errorInfo={errorInfo}
           />
         </div>
-        <div className={styles.card}>
+        <div className={cx(styles.card, styles.w50)}>
           <div className={styles.verticalLayout}>
             <div className={styles.card}>
               <EditorPanel

@@ -13,6 +13,8 @@ import {
 import CodeMirror from 'codemirror'
 
 import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/scroll/simplescrollbars'
+import 'codemirror/addon/scroll/simplescrollbars.css'
 import 'codemirror/addon/edit/closebrackets'
 import 'codemirror/mode/javascript/javascript'
 
@@ -34,8 +36,9 @@ import 'codemirror/mode/javascript/javascript'
  */
 const defaultOptions = {
   showCursorWhenSelecting: false,
-  scrollbarStyle: 'native',
+  scrollbarStyle: 'overlay',
   lineNumbers: true,
+  lineWrapping: true,
   autoCloseBrackets: true,
   mode: 'javascript'
 }
