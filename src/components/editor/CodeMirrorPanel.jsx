@@ -1,7 +1,8 @@
 import cx from 'classnames'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import PropsTypes from 'prop-types'
 import { getCodeSizeInBytes } from '../../utils/helpers'
+import { useErrorStatusbar } from './useErrorStatusbar'
 import CodeMirror from './CodeMirror'
 import styles from './CodeMirrorPanel.module.css'
 
@@ -44,56 +45,7 @@ function CodeMirrorPanel(props) {
   )
 
   // 显示错误提示信息 errorInfo
-  useEffect(() => {
-    /** @type {import('codemirror').Editor} */
-    const cm = editor.current
-    /**
-      @type {{
-        line: number
-        col: number
-        pos: number
-        name: string
-        message: string
-      }}
-     */
-    const info = props.errorInfo
-    if (cm && info) {
-      /**
-       * @type {import('codemirror').TextMarker}
-       * @see https://codemirror.net/doc/manual.html#markText
-       */
-      var marker = null
-      /**
-       * @type {import('codemirror').LineWidget}
-       * @see https://codemirror.net/demo/widget.html
-       */
-      var widget = null
-      cm.operation(() => {
-        // textMarker
-        const line = info.line - 1
-        const col = info.col < 1 ? 0 : info.col - 1
-        marker = cm.markText(
-          { line, ch: col },
-          { line, ch: col + 1 },
-          { className: styles.errorMarker }
-        )
-        // lineWidget
-        const node = document.createElement('div')
-        node.className = styles.errorLine
-        const labelNode = document.createElement('span')
-        labelNode.className = styles.errorLineLabel
-        const label = `(${info.line},${info.col}) ${info.name}`
-        labelNode.appendChild(document.createTextNode(label))
-        node.appendChild(labelNode)
-        node.appendChild(document.createTextNode(info.message))
-        widget = cm.addLineWidget(info.line - 1, node)
-      })
-      return () => {
-        if (marker) marker.clear()
-        if (widget) widget.clear()
-      }
-    }
-  }, [props.errorInfo])
+  useErrorStatusbar(editor.current, props.errorInfo)
 
   return (
     <div className={cx(styles.container, props.className)}>
