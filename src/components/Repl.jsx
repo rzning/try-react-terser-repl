@@ -12,6 +12,7 @@ export default function Repl() {
     format(JSON.stringify(defaultTerserOptions), 'json')
   )
   const [terserOptions, setTerserOptions] = useState(() => defaultTerserOptions)
+  const [optionsErrorMessage, setOptionsErrorMessage] = useState('')
   const [code, setCode] = useState('// 编写或粘贴代码到此处')
   const [minifiedCode, setMinifiedCode] = useState('// Terser output')
   const [errorInfo, setErrorInfo] = useState()
@@ -21,8 +22,9 @@ export default function Repl() {
     try {
       const options = JSON.parse(value)
       setTerserOptions(options)
+      setOptionsErrorMessage('')
     } catch (exception) {
-      console.dir(exception)
+      setOptionsErrorMessage(exception.message)
     }
   }, [])
 
@@ -46,6 +48,16 @@ export default function Repl() {
   return (
     <div className={styles.container}>
       <div className={styles.horizontalLayout}>
+        <div className={cx(styles.card, styles.w30)}>
+          <EditorPanel
+            format
+            title="Terser Options"
+            code={terserOptionsCode}
+            options={optionsCodeEditorOptions}
+            onChange={updateOptionsCode}
+            errorMessage={optionsErrorMessage}
+          />
+        </div>
         <div className={cx(styles.card, styles.w50)}>
           <EditorPanel
             title="Input"
@@ -55,21 +67,8 @@ export default function Repl() {
             errorInfo={errorInfo}
           />
         </div>
-        <div className={cx(styles.card, styles.w50)}>
-          <div className={styles.verticalLayout}>
-            <div className={styles.card}>
-              <EditorPanel
-                format
-                title="Terser Options"
-                code={terserOptionsCode}
-                options={optionsCodeEditorOptions}
-                onChange={updateOptionsCode}
-              />
-            </div>
-            <div className={styles.card2}>
-              <EditorPanel title="Output" showFileSize code={minifiedCode} />
-            </div>
-          </div>
+        <div className={cx(styles.card, styles.w30)}>
+          <EditorPanel title="Output" showFileSize code={minifiedCode} />
         </div>
       </div>
     </div>

@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { Pos } from 'codemirror'
 import styles from './CodeMirrorPanel.module.css'
 
+import 'codemirror/addon/display/panel'
+
 /**
  * 设置自定义错误状态栏
  * @param {import('codemirror').Editor} editor
@@ -51,4 +53,28 @@ export function useErrorStatusbar(editor, errorInfo) {
       }
     }
   }, [editor, errorInfo])
+}
+
+/**
+ * 使用简单错误状态提示栏
+ * @param {import('codemirror').Editor} editor
+ * @param {string} errorMessage
+ */
+export function useSimpleErrorStatusbar(editor, errorMessage) {
+  useEffect(() => {
+    if (editor && errorMessage) {
+      /** @type {import('codemirror').Panel} */
+      var panel = null
+      editor.operation(() => {
+        const node = document.createElement('div')
+        node.className = styles.simpleErrorLine
+        node.appendChild(document.createTextNode(errorMessage))
+        panel = editor.addPanel(node, { position: 'bottom' })
+      })
+      editor.setSize(null, '100%')
+      return () => {
+        if (panel) panel.clear()
+      }
+    }
+  }, [editor, errorMessage])
 }

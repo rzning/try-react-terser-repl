@@ -2,7 +2,7 @@ import cx from 'classnames'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import PropsTypes from 'prop-types'
 import { getCodeSizeInBytes } from '../../utils/helpers'
-import { useErrorStatusbar } from './useErrorStatusbar'
+import { useErrorStatusbar, useSimpleErrorStatusbar } from './useErrorStatusbar'
 import CodeMirror from './CodeMirror'
 import styles from './CodeMirrorPanel.module.css'
 import { format } from '../../utils/beautifier'
@@ -48,6 +48,7 @@ function CodeMirrorPanel(props) {
 
   // 显示错误提示信息 errorInfo
   useErrorStatusbar(editor.current, props.errorInfo)
+  useSimpleErrorStatusbar(editor.current, props.errorMessage)
 
   const doFormat = useCallback(() => {
     if (props.format && typeof onChange === 'function') {
@@ -72,6 +73,8 @@ function CodeMirrorPanel(props) {
       </div>
       <div className={styles.codeMirror}>
         <CodeMirror
+          width="100%"
+          height="100%"
           theme={props.theme}
           options={options}
           value={props.code}
@@ -89,8 +92,10 @@ CodeMirrorPanel.propTypes = {
   options: PropsTypes.object,
   theme: PropsTypes.string,
   showFileSize: PropsTypes.bool,
+  format: PropsTypes.bool,
   code: PropsTypes.string.isRequired,
   onChange: PropsTypes.func,
+  errorMessage: PropsTypes.string,
   errorInfo: PropsTypes.shape({
     line: PropsTypes.number.isRequired,
     col: PropsTypes.number,
