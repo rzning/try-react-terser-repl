@@ -5,27 +5,29 @@ import { getCodeSizeInBytes } from '../../utils/helpers'
 import { useErrorStatusbar } from './useErrorStatusbar'
 import CodeMirror from './CodeMirror'
 import styles from './CodeMirrorPanel.module.css'
+import { format } from '../../utils/beautifier'
 
 function CodeMirrorPanel(props) {
+  const { code, onChange } = props || {}
   /**
    * 选项
    */
   const options = useMemo(() => {
     return {
       ...props.options,
-      readOnly: !props.onChange
+      readOnly: !onChange
     }
-  }, [props.onChange, props.options])
+  }, [onChange, props.options])
 
   /**
    * 代码字节数
    */
   const fileSize = useMemo(() => {
     if (props.showFileSize) {
-      return getCodeSizeInBytes(props.code)
+      return getCodeSizeInBytes(code)
     }
     return 0
-  }, [props.showFileSize, props.code])
+  }, [props.showFileSize, code])
 
   const editor = useRef(null)
   const [modeName, setModeName] = useState(null)
@@ -47,10 +49,22 @@ function CodeMirrorPanel(props) {
   // 显示错误提示信息 errorInfo
   useErrorStatusbar(editor.current, props.errorInfo)
 
+  const doFormat = useCallback(() => {
+    if (props.format && typeof onChange === 'function') {
+      const value = format(code, modeName)
+      onChange(value)
+    }
+  }, [code, modeName, onChange, props.format])
+
   return (
     <div className={cx(styles.container, props.className)}>
       <div className={styles.header}>
         <div className={styles.title}>{props.title}</div>
+        {props.format && (
+          <div className={styles.widget} title="Format" onClick={doFormat}>
+            {'</>'}
+          </div>
+        )}
         {props.showFileSize && (
           <div className={styles.widget}>{fileSize} bytes</div>
         )}
@@ -61,7 +75,7 @@ function CodeMirrorPanel(props) {
           theme={props.theme}
           options={options}
           value={props.code}
-          onChange={props.onChange}
+          onChange={onChange}
           onEditorMounted={onEditorMounted}
         />
       </div>

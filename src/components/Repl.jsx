@@ -1,6 +1,7 @@
 import cx from 'classnames'
 import { useCallback, useState } from 'react'
 import defaultTerserOptions from '../configs/defaultTerserOptions.json'
+import { format } from '../utils/beautifier'
 import { doMinify } from '../utils/minify'
 import EditorPanel from './editor/CodeMirrorPanel'
 import styles from './Repl.module.css'
@@ -8,7 +9,7 @@ import styles from './Repl.module.css'
 export default function Repl() {
   const [optionsCodeEditorOptions] = useState({ mode: 'json' })
   const [terserOptionsCode, setTerserOptionsCode] = useState(() =>
-    JSON.stringify(defaultTerserOptions)
+    format(JSON.stringify(defaultTerserOptions), 'json')
   )
   const [terserOptions, setTerserOptions] = useState(() => defaultTerserOptions)
   const [code, setCode] = useState('// 编写或粘贴代码到此处')
@@ -58,6 +59,7 @@ export default function Repl() {
           <div className={styles.verticalLayout}>
             <div className={styles.card}>
               <EditorPanel
+                format
                 title="Terser Options"
                 code={terserOptionsCode}
                 options={optionsCodeEditorOptions}
